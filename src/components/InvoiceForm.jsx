@@ -159,9 +159,13 @@ const InvoiceForm = () => {
   const handleCopyInvoice = () => {
     const recievedInvoice = getOneInvoice(copyId);
     if (recievedInvoice) {
-      setFormData({ ...recievedInvoice, id: formData.id });
+      setFormData({
+        ...recievedInvoice,
+        id: formData.id,
+        invoiceNumber: formData.invoiceNumber,
+      });
     } else {
-      alert("Invoice does not exists");
+      alert("Invoice does not exists!!!!!");
     }
   };
 
