@@ -12,39 +12,47 @@ import { deleteInvoice } from "../redux/invoicesSlice";
 const InvoiceList = () => {
   const { invoiceList } = useInvoiceListData();
   const isListEmpty = invoiceList.length === 0;
-  const invoiceTable = invoiceList.map((invoice) => (
-    <InvoiceRow key={invoice.invoiceNumber} invoice={invoice} />
-  ));
+  const navigate = useNavigate();
+
   return (
     <Row>
-      <Col className="w-100" md={8} lg={9}>
-        <Card className="d-flex p-4 p-xl-5 my-3 my-xl-4">
+      <Col className="mx-auto" xs={12} md={8} lg={9}>
+        <h3 className="fw-bold pb-2 pb-md-4 text-center">Swipe Assignment</h3>
+        <Card className="d-flex p-3 p-md-4 my-3 my-md-4 ">
           {isListEmpty ? (
             <div className="d-flex flex-column align-items-center">
-              <h3 className="fw-bold pb-4">No invoices present</h3>
+              <h3 className="fw-bold pb-2 pb-md-4">No invoices present</h3>
               <Link to="/create">
                 <Button variant="primary">Create Invoice</Button>
               </Link>
             </div>
           ) : (
             <div className="d-flex flex-column">
-              <div className="d-flex flex-row align-items-center justify-content-between ">
-                <h3 className="fw-bold pb-4">Invoice List</h3>
+              <div className="d-flex flex-row align-items-center justify-content-between">
+                <h3 className="fw-bold pb-2 pb-md-4">Invoice List</h3>
                 <Link to="/create">
-                  <Button variant="primary mb-4 mr-2">Create Invoice</Button>
+                  <Button variant="primary mb-2 mb-md-4">Create Invoice</Button>
                 </Link>
               </div>
-              <Table>
+              <Table responsive>
                 <thead>
                   <tr>
                     <th>Invoice No.</th>
                     <th>Bill To</th>
-                    <th>Bill From</th>
                     <th>Due Date</th>
                     <th>Total Amt.</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>{invoiceTable}</tbody>
+                <tbody>
+                  {invoiceList.map((invoice) => (
+                    <InvoiceRow
+                      key={invoice.id}
+                      invoice={invoice}
+                      navigate={navigate}
+                    />
+                  ))}
+                </tbody>
               </Table>
             </div>
           )}
@@ -54,13 +62,14 @@ const InvoiceList = () => {
   );
 };
 
-const InvoiceRow = ({ invoice }) => {
+const InvoiceRow = ({ invoice, navigate }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleDeleteClick = () => {
-    dispatch(deleteInvoice(invoice.id));
+
+  const handleDeleteClick = (invoiceId) => {
+    dispatch(deleteInvoice(invoiceId));
   };
+
   const handleEditClick = () => {
     navigate(`/edit/${invoice.id}`);
   };
@@ -73,37 +82,37 @@ const InvoiceRow = ({ invoice }) => {
   const closeModal = () => {
     setIsOpen(false);
   };
+
   return (
     <tr>
-      <th>{invoice.invoiceNumber}</th>
-      <th className="fw-normal">{invoice.billTo}</th>
-      <th className="fw-normal">{invoice.billFrom}</th>
-      <th className="fw-normal">{invoice.dateOfIssue}</th>
-      <th className="fw-normal">
+      <td>{invoice.invoiceNumber}</td>
+      <td className="fw-normal">{invoice.billTo}</td>
+      <td className="fw-normal">{invoice.dateOfIssue}</td>
+      <td className="fw-normal">
         {invoice.currency}
         {invoice.total}
-      </th>
-      <th style={{ width: "5%" }}>
+      </td>
+      <td style={{ width: "5%" }}>
         <Button variant="outline-primary" onClick={handleEditClick}>
           <div className="d-flex align-items-center justify-content-center gap-2">
             <BiSolidPencil />
           </div>
         </Button>
-      </th>
-      <th style={{ width: "5%" }}>
-        <Button variant="danger" onClick={handleDeleteClick}>
+      </td>
+      <td style={{ width: "5%" }}>
+        <Button variant="danger" onClick={() => handleDeleteClick(invoice.id)}>
           <div className="d-flex align-items-center justify-content-center gap-2">
             <BiTrash />
           </div>
         </Button>
-      </th>
-      <th style={{ width: "5%" }}>
+      </td>
+      <td style={{ width: "5%" }}>
         <Button variant="secondary" onClick={openModal}>
           <div className="d-flex align-items-center justify-content-center gap-2">
             <BsEyeFill />
           </div>
         </Button>
-      </th>
+      </td>
       <InvoiceModal
         showModal={isOpen}
         closeModal={closeModal}
