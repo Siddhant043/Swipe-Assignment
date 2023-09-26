@@ -1,0 +1,3 @@
+  command = "npm run build"
+  publish = "build"
+  node_version = "14.15.10"
