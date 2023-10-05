@@ -5,7 +5,11 @@ export const useInvoiceListData = () => {
   const invoiceList = useSelector(selectInvoiceList);
 
   const getOneInvoice = (receivedId) => {
-    return invoiceList.find((invoice) => invoice.id === receivedId) || null;
+    return (
+      invoiceList.find(
+        (invoice) => invoice.id.toString() === receivedId.toString()
+      ) || null
+    );
   };
 
   const listSize = invoiceList.length;

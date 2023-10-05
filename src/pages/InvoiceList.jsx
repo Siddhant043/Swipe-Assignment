@@ -10,9 +10,18 @@ import { useDispatch } from "react-redux";
 import { deleteInvoice } from "../redux/invoicesSlice";
 
 const InvoiceList = () => {
-  const { invoiceList } = useInvoiceListData();
+  const { invoiceList, getOneInvoice } = useInvoiceListData();
   const isListEmpty = invoiceList.length === 0;
+  const [copyId, setCopyId] = useState("");
   const navigate = useNavigate();
+  const handleCopyClick = () => {
+    const invoice = getOneInvoice(copyId);
+    if (!invoice) {
+      alert("Please enter the valid invoice id.");
+    } else {
+      navigate(`/create/${copyId}`);
+    }
+  };
 
   return (
     <Row>
@@ -33,6 +42,23 @@ const InvoiceList = () => {
                 <Link to="/create">
                   <Button variant="primary mb-2 mb-md-4">Create Invoice</Button>
                 </Link>
+
+                <div className="d-flex gap-2">
+                  <Button variant="dark mb-2 mb-md-4" onClick={handleCopyClick}>
+                    Copy Invoice
+                  </Button>
+
+                  <input
+                    type="text"
+                    value={copyId}
+                    onChange={(e) => setCopyId(e.target.value)}
+                    placeholder="Enter Invoice ID to copy"
+                    className="bg-white border"
+                    style={{
+                      height: "50px",
+                    }}
+                  />
+                </div>
               </div>
               <Table responsive>
                 <thead>

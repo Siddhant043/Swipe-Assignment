@@ -11,20 +11,29 @@ import { BiArrowBack } from "react-icons/bi";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useDispatch } from "react-redux";
 import { addInvoice, updateInvoice } from "../redux/invoicesSlice";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import generateRandomId from "../utils/generateRandomId";
 import { useInvoiceListData } from "../redux/hooks";
 
 const InvoiceForm = () => {
   const dispatch = useDispatch();
   const params = useParams();
+  const location = useLocation();
+  const isCopy = location.pathname.includes("create");
+  const isEdit = location.pathname.includes("edit");
 
   const [isOpen, setIsOpen] = useState(false);
   const [copyId, setCopyId] = useState("");
   const { getOneInvoice, listSize } = useInvoiceListData();
   const [formData, setFormData] = useState(
-    params.id
+    isEdit
       ? getOneInvoice(params.id)
+      : isCopy && params.id
+      ? {
+          ...getOneInvoice(params.id),
+          id: generateRandomId(),
+          invoiceNumber: listSize + 1,
+        }
       : {
           id: generateRandomId(),
           currentDate: new Date().toLocaleDateString(),
@@ -147,9 +156,12 @@ const InvoiceForm = () => {
   };
 
   const handleAddInvoice = () => {
-    if (params.id) {
+    if (isEdit) {
       dispatch(updateInvoice({ id: params.id, updatedInvoice: formData }));
       alert("Invoice updated successfuly 🥳");
+    } else if (isCopy) {
+      dispatch(addInvoice({ id: generateRandomId(), ...formData }));
+      alert("Invoice added successfuly 🥳");
     } else {
       dispatch(addInvoice(formData));
       alert("Invoice added successfuly 🥳");
@@ -354,7 +366,7 @@ const InvoiceForm = () => {
               onClick={handleAddInvoice}
               className="d-block w-100 mb-2"
             >
-              {params.id ? "Update Invoice" : "Add Invoice"}
+              {isEdit ? "Update Invoice" : "Add Invoice"}
             </Button>
             <Button variant="primary" type="submit" className="d-block w-100">
               Review Invoice
