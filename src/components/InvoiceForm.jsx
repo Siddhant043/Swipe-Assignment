@@ -11,7 +11,7 @@ import { BiArrowBack } from "react-icons/bi";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useDispatch } from "react-redux";
 import { addInvoice, updateInvoice } from "../redux/invoicesSlice";
-import { Link, useParams, useLocation } from "react-router-dom";
+import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import generateRandomId from "../utils/generateRandomId";
 import { useInvoiceListData } from "../redux/hooks";
 
@@ -19,6 +19,7 @@ const InvoiceForm = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const isCopy = location.pathname.includes("create");
   const isEdit = location.pathname.includes("edit");
 
@@ -166,6 +167,7 @@ const InvoiceForm = () => {
       dispatch(addInvoice(formData));
       alert("Invoice added successfuly 🥳");
     }
+    navigate("/");
   };
 
   const handleCopyInvoice = () => {
